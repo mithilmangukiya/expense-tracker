@@ -16,6 +16,7 @@ const UserProvider = ({children}) => {
     const logout = () => {
         localStorage.clear();
         clearUser();
+        localStorage.removeItem("token");
     };
 
     return(
