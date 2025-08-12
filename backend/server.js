@@ -15,7 +15,7 @@ const app = express()
 
 app.use(
     cors({
-        origin: 'https://expense-tracker-navy-nu-54.vercel.app',
+        origin: 'https://expense-tracker-app-zeta.vercel.app',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
