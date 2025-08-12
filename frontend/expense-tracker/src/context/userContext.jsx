@@ -12,8 +12,14 @@ const UserProvider = ({children}) => {
     const clearUser = () => {
         setUser(null)
     }
+
+    const logout = () => {
+        localStorage.clear();
+        clearUser();
+    };
+
     return(
-        <UserContext.Provider value={{user, updateUser, clearUser}}>
+        <UserContext.Provider value={{user, updateUser, clearUser, logout}}>
             {children}
         </UserContext.Provider>
     )
