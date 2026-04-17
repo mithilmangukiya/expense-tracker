@@ -20,10 +20,13 @@ export const getCurrencyName = (currencyCode) => {
 
 // Convert amount from INR to any currency
 export const convertCurrency = (amountInINR, fromCurrency = 'INR', toCurrency = 'INR') => {
-    if (fromCurrency === toCurrency) return amountInINR;
+    const amount = Number(amountInINR || 0);
+    if (Number.isNaN(amount)) return 0;
+
+    if (fromCurrency === toCurrency) return amount;
     
     // First convert to INR base if needed
-    const amountInBase = amountInINR / (CURRENCY_CONFIG[fromCurrency]?.rate || 1);
+    const amountInBase = amount / (CURRENCY_CONFIG[fromCurrency]?.rate || 1);
     
     // Then convert to target currency
     const converted = amountInBase * (CURRENCY_CONFIG[toCurrency]?.rate || 1);

@@ -258,8 +258,8 @@ const Analytics = () => {
                 }))}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#aaa" />
                   <XAxis dataKey="year" stroke="#333" />
-                  <YAxis tickFormatter={(value) => `${currencySymbol}${value.toFixed(0)}`} stroke="#333" />
-                  <Tooltip formatter={(value) => `${currencySymbol}${value.toFixed(2)}`} />
+                  <YAxis tickFormatter={(value) => `${currencySymbol}${Number(value || 0).toFixed(0)}`} stroke="#333" />
+                  <Tooltip formatter={(value) => `${currencySymbol}${Number(value || 0).toFixed(2)}`} />
                   <Legend />
                   <Line
                     type="monotone"
