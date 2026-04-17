@@ -1,13 +1,13 @@
 // Currency utilities for the Expense Tracker app
 
 export const CURRENCY_CONFIG = {
-    INR: { symbol: '₹', name: 'Indian Rupee' },
-    USD: { symbol: '$', name: 'US Dollar' },
-    EUR: { symbol: '€', name: 'Euro' },
-    GBP: { symbol: '£', name: 'British Pound' },
-    JPY: { symbol: '¥', name: 'Japanese Yen' },
-    CAD: { symbol: 'C$', name: 'Canadian Dollar' },
-    AUD: { symbol: 'A$', name: 'Australian Dollar' }
+    INR: { symbol: '₹', name: 'Indian Rupee', rate: 1 },
+    USD: { symbol: '$', name: 'US Dollar', rate: 0.012 },
+    EUR: { symbol: '€', name: 'Euro', rate: 0.011 },
+    GBP: { symbol: '£', name: 'British Pound', rate: 0.0095 },
+    JPY: { symbol: '¥', name: 'Japanese Yen', rate: 1.8 },
+    CAD: { symbol: 'C$', name: 'Canadian Dollar', rate: 0.017 },
+    AUD: { symbol: 'A$', name: 'Australian Dollar', rate: 0.018 }
 };
 
 export const getCurrencySymbol = (currencyCode) => {
@@ -16,6 +16,19 @@ export const getCurrencySymbol = (currencyCode) => {
 
 export const getCurrencyName = (currencyCode) => {
     return CURRENCY_CONFIG[currencyCode]?.name || 'Indian Rupee';
+};
+
+// Convert amount from INR to any currency
+export const convertCurrency = (amountInINR, fromCurrency = 'INR', toCurrency = 'INR') => {
+    if (fromCurrency === toCurrency) return amountInINR;
+    
+    // First convert to INR base if needed
+    const amountInBase = amountInINR / (CURRENCY_CONFIG[fromCurrency]?.rate || 1);
+    
+    // Then convert to target currency
+    const converted = amountInBase * (CURRENCY_CONFIG[toCurrency]?.rate || 1);
+    
+    return Math.round(converted * 100) / 100; // Round to 2 decimals
 };
 
 export const formatAmount = (amount, currencyCode = 'INR') => {

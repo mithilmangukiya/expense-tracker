@@ -1,8 +1,12 @@
 import React, { useContext } from 'react'
 import { UserContext } from '../../context/userContext'
+import { convertCurrency } from '../../utils/currencyFormatter'
 
-const InfoCard = ({ icon, label, value, color }) => {
-    const { currencySymbol } = useContext(UserContext);
+const InfoCard = ({ icon, label, value, color, valueCurrency = 'INR' }) => {
+    const { currency, currencySymbol } = useContext(UserContext);
+    
+    // Convert the value to selected currency
+    const convertedValue = convertCurrency(value, valueCurrency, currency);
     
     return (
         <div className='flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-200/50'>
@@ -11,7 +15,7 @@ const InfoCard = ({ icon, label, value, color }) => {
             </div>
             <div>
                 <h6 className='text-sm text-gray-500 mb-1'>{label}</h6>
-                <span className='text-[22px]'>{currencySymbol}{value}</span>
+                <span className='text-[22px]'>{currencySymbol}{convertedValue.toFixed(2)}</span>
             </div>
         </div>
     )

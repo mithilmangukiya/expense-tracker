@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { DatePicker } from "antd";
 import { UserContext } from "../../context/userContext";
+import { convertCurrency } from "../../utils/currencyFormatter";
 import {
   LineChart,
   Line,
@@ -20,7 +21,7 @@ const { RangePicker } = DatePicker;
 
 const Analytics = () => {
   useUserAuth();
-  const { currencySymbol } = useContext(UserContext);
+  const { currency, currencySymbol } = useContext(UserContext);
   const [dateRange1, setDateRange1] = useState([]);
   const [dateRange2, setDateRange2] = useState([]);
   const [data, setData] = useState(null);
@@ -158,15 +159,15 @@ const Analytics = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               <div className="bg-gray-100 p-6 rounded-lg shadow-sm border border-gray-300">
                 <h2 className="text-lg font-semibold text-green-600 mb-2">📦 Range 1 Summary</h2>
-                <p>💰 Total Income: {currencySymbol}{data.range1.totalIncome}</p>
-                <p>💸 Total Expense: {currencySymbol}{data.range1.totalExpense}</p>
-                <p>🧾 Balance: {currencySymbol}{data.range1.balance}</p>
+                <p>💰 Total Income: {currencySymbol}{convertCurrency(data.range1.totalIncome, 'INR', currency).toFixed(2)}</p>
+                <p>💸 Total Expense: {currencySymbol}{convertCurrency(data.range1.totalExpense, 'INR', currency).toFixed(2)}</p>
+                <p>🧾 Balance: {currencySymbol}{convertCurrency(data.range1.balance, 'INR', currency).toFixed(2)}</p>
               </div>
               <div className="bg-gray-100 p-6 rounded-lg shadow-sm border border-gray-300">
                 <h2 className="text-lg font-semibold text-red-600 mb-2">📦 Range 2 Summary</h2>
-                <p>💰 Total Income: {currencySymbol}{data.range2.totalIncome}</p>
-                <p>💸 Total Expense: {currencySymbol}{data.range2.totalExpense}</p>
-                <p>🧾 Balance: {currencySymbol}{data.range2.balance}</p>
+                <p>💰 Total Income: {currencySymbol}{convertCurrency(data.range2.totalIncome, 'INR', currency).toFixed(2)}</p>
+                <p>💸 Total Expense: {currencySymbol}{convertCurrency(data.range2.totalExpense, 'INR', currency).toFixed(2)}</p>
+                <p>🧾 Balance: {currencySymbol}{convertCurrency(data.range2.balance, 'INR', currency).toFixed(2)}</p>
               </div>
             </div>
 
@@ -215,7 +216,7 @@ const Analytics = () => {
                 <ul>
                   {data.topSpendingCategories.map((category, index) => (
                     <li key={index}>
-                      {category.category}: {currencySymbol}{category.amount}
+                      {category.category}: {currencySymbol}{convertCurrency(category.amount, 'INR', currency).toFixed(2)}
                     </li>
                   ))}
                 </ul>
@@ -252,13 +253,13 @@ const Analytics = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={Object.entries(yearlyComparison).map(([year, values]) => ({
                   year,
-                  income: values?.income || 0,
-                  expense: values?.expense || 0,
+                  income: convertCurrency(values?.income || 0, 'INR', currency),
+                  expense: convertCurrency(values?.expense || 0, 'INR', currency),
                 }))}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#aaa" />
                   <XAxis dataKey="year" stroke="#333" />
-                  <YAxis tickFormatter={(value) => `${currencySymbol}${value}`} stroke="#333" />
-                  <Tooltip formatter={(value) => `${currencySymbol}${value}`} />
+                  <YAxis tickFormatter={(value) => `${currencySymbol}${value.toFixed(0)}`} stroke="#333" />
+                  <Tooltip formatter={(value) => `${currencySymbol}${value.toFixed(2)}`} />
                   <Legend />
                   <Line
                     type="monotone"

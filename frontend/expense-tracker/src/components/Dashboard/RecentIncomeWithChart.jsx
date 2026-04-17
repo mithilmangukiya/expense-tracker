@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react'
 import CustomePieChart from '../Charts/CustomePieChart'
 import { UserContext } from '../../context/userContext'
+import { convertCurrency } from '../../utils/currencyFormatter'
 
 const COLORS = ['#875CF5', '#FA2C37', '#FF6900', '#4f39f6']
 const RecentIncomeWithChart = ({data, totalIncome}) => {
-    const { currencySymbol } = useContext(UserContext);
+    const { currency, currencySymbol } = useContext(UserContext);
     const [chartData, setChartData] = useState([])
 
     const prepareChartData = () => {
         const dataArr = data?.map((item) => ({
             name: item.source,
-            amount: item.amount,
+            amount: convertCurrency(item.amount, item.currency || 'INR', currency),
         }))
 
         setChartData(dataArr)
@@ -18,7 +19,10 @@ const RecentIncomeWithChart = ({data, totalIncome}) => {
     useEffect(()=> {
         prepareChartData()
         return () => {}
-    }, [data])
+    }, [data, currency])
+    
+    const convertedTotalIncome = convertCurrency(totalIncome, 'INR', currency);
+    
   return (
     <div className='card'>
         <div className='flex items-center justify-between'>
@@ -28,7 +32,7 @@ const RecentIncomeWithChart = ({data, totalIncome}) => {
         <CustomePieChart
         data={chartData}
         label='Total Income'
-        totalAmount={`${currencySymbol}${totalIncome}`}
+        totalAmount={`${currencySymbol}${convertedTotalIncome.toFixed(2)}`}
         showTextAnchor
         colors={COLORS} />
     </div>

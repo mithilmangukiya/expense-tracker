@@ -9,13 +9,14 @@ import Modal from "../../components/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import ExpenseList from "../../components/Expense/ExpenseList";
 import { UserContext } from "../../context/userContext";
+import { convertCurrency } from "../../utils/currencyFormatter";
 import DeleteAlert from "../../components/DeleteAlert";
 import Calander from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 const Expense = () => {
   useUserAuth();
-  const { currencySymbol } = useContext(UserContext);
+  const { currency, currencySymbol } = useContext(UserContext);
   const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
@@ -37,7 +38,7 @@ const Expense = () => {
       );
       if (response.data) {
         setExpenseData(response.data);
-        calculateDailyExpenses(response.data);
+        calculateDailyExpenses(response.data, currency);
       }
     } catch (error) {
       console.error("Something went wrong. Please try again", error);
@@ -74,7 +75,7 @@ const Expense = () => {
 
       if (response.data) {
         setExpenseData((prevExpenseData) => [...prevExpenseData, response.data]);
-        calculateDailyExpenses([...expenseData, response.data]); 
+        calculateDailyExpenses([...expenseData, response.data], currency); 
         filterExpensesByDate(selectedDate, [...expenseData, response.data]); 
       }
 
@@ -103,7 +104,7 @@ const Expense = () => {
   };
 
 
-  const calculateDailyExpenses = (expenses) => {
+  const calculateDailyExpenses = (expenses, targetCurrency = 'INR') => {
     const dailyExpenseMap = {};
     expenses.forEach((expense) => {
       const date = new Date(expense.date);
@@ -113,8 +114,10 @@ const Expense = () => {
         .toISOString()
         .split("T")[0];
 
+      // Convert expense amount to target currency
+      const convertedAmount = convertCurrency(expense.amount, expense.currency || 'INR', targetCurrency);
       dailyExpenseMap[localDate] =
-        (dailyExpenseMap[localDate] || 0) + expense.amount;
+        (dailyExpenseMap[localDate] || 0) + convertedAmount;
     });
     setDailyExpenses(dailyExpenseMap);
   };
@@ -141,6 +144,13 @@ const Expense = () => {
   useEffect(() => {
     filterExpensesByDate(selectedDate);
   }, [selectedDate, expenseData]);
+
+  // Recalculate daily expenses when currency changes
+  useEffect(() => {
+    if (expenseData.length > 0) {
+      calculateDailyExpenses(expenseData, currency);
+    }
+  }, [currency]);
 
   return (
     <DashboardLayout activeMenu="Expense">
