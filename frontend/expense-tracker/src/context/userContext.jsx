@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from '../utils/axiosInstance';
 import { getCurrencySymbol } from '../utils/currencyFormatter';
+import { API_PATHS } from '../utils/apiPaths';
 
 export const UserContext = createContext();
 
@@ -23,7 +24,7 @@ const UserProvider = ({children}) => {
 
     const updateCurrency = async (newCurrency) => {
         try {
-            const response = await axios.put('/auth/currency', { currency: newCurrency });
+            const response = await axios.put(API_PATHS.AUTH.UPDATE_CURRENCY, { currency: newCurrency });
             if (response.data.user) {
                 updateUser(response.data.user);
             }
