@@ -57,3 +57,31 @@ exports.getUserInfo = async (req, res) => {
         res.status(500).json({ message: "Error diaplay user", error: err.message })
     }
 }
+
+exports.updateCurrency = async (req, res) => {
+    const { currency } = req.body
+    const validCurrencies = ['INR', 'USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD']
+    
+    if (!currency || !validCurrencies.includes(currency)) {
+        return res.status(400).json({ message: 'Please provide a valid currency' })
+    }
+    
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.user.id, 
+            { currency }, 
+            { new: true }
+        ).select('-password')
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+        
+        res.status(200).json({ 
+            message: 'Currency updated successfully',
+            user 
+        })
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating currency', error: err.message })
+    }
+}

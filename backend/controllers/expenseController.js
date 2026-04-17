@@ -12,8 +12,13 @@ exports.addExpense = async (req, res) => {
         if(!category ||!amount){
             return res.status(400).json({message: 'Please enter all fields'})
         }
+        
+        // Get user's currency preference
+        const user = await User.findById(userId)
+        const currency = user.currency || 'INR'
+        
         const dateValue = date ? new Date(date) : new Date(); 
-        const newExpense = new Expense({userId, icon, category, amount, date: dateValue})
+        const newExpense = new Expense({userId, icon, category, amount, currency, date: dateValue})
         await newExpense.save()
         res.status(200).json(newExpense)
     }catch(err){

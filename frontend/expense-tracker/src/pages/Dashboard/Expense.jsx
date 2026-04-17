@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
@@ -8,12 +8,14 @@ import ExpenseOverview from "../../components/Expense/ExpenseOverview";
 import Modal from "../../components/Modal";
 import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import ExpenseList from "../../components/Expense/ExpenseList";
+import { UserContext } from "../../context/userContext";
 import DeleteAlert from "../../components/DeleteAlert";
 import Calander from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 const Expense = () => {
   useUserAuth();
+  const { currencySymbol } = useContext(UserContext);
   const [expenseData, setExpenseData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
@@ -196,7 +198,7 @@ const Expense = () => {
                       className={`text-sm font-medium mt-1 transition-all duration-300 ${expenseAmount > 0 ? "text-red-500" : "text-green-500"
                         }`}
                     >
-                      ₹{expenseAmount}
+                      {currencySymbol}{expenseAmount}
                     </p>
                   );
                 }}
@@ -216,7 +218,7 @@ const Expense = () => {
                   : "text-green-600"
                 }`}
             >
-              ₹{dailyExpenses[selectedDate.toLocaleDateString("en-CA")] || 0}
+              {currencySymbol}{dailyExpenses[selectedDate.toLocaleDateString("en-CA")] || 0}
             </p>
           </div>
           <div className="mt-6">

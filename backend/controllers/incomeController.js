@@ -12,8 +12,13 @@ exports.addIncome = async (req, res) => {
         if(!source ||!amount){
             return res.status(400).json({message: 'Please enter all fields'})
         }
+        
+        // Get user's currency preference
+        const user = await User.findById(userId)
+        const currency = user.currency || 'INR'
+        
         const dateValue = date ? new Date(date) : new Date(); 
-        const newIncome = new Income({userId, icon, source, amount, date: dateValue})
+        const newIncome = new Income({userId, icon, source, amount, currency, date: dateValue})
         await newIncome.save()
         res.status(200).json(newIncome)
     }catch(err){
